@@ -54,3 +54,4 @@ export default tseslint.config({
 ```
 # sushi_bar_frontend
 # sushi_bar_frontend
+# sushi_bar_frontend
