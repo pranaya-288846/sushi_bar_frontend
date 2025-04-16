@@ -5,7 +5,7 @@ export const MenuDataSchema = z.object({
     name: z.string(),
     price: z.number(),
     description: z.string(),
-    availability: z.string(),
+    availability: z.number(),
     imageUrl: z.string(),
 })
 

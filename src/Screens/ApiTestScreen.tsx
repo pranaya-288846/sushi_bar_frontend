@@ -1,7 +1,7 @@
 // src/pages/DataDisplayScreen.tsx
 import { useState, useEffect } from 'react';
-import apiService from '../Infrastructure/Api';
-import {MenuData} from "../models/MenuData.ts";
+import menuApi from '../Api/Client.ts';
+import {MenuData} from "../Api/types/MenuData.ts";
 
 
 export default function DataDisplayScreen() {
@@ -9,10 +9,13 @@ export default function DataDisplayScreen() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    const item: MenuData = {id: 25,name: "Brozza", description: "Delicious food", availability: 2 , price: 25, imageUrl: "test url"}
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await apiService.get();
+                await menuApi.post(item)
+                const data = await menuApi.get();
                 setData(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An unknown error occurred');
