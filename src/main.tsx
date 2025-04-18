@@ -1,10 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import {StrictMode} from 'react'
+import {createRoot} from 'react-dom/client'
 import './index.css'
-import DataDisplayScreen from "./Screens/ApiTestScreen.tsx";
+import {CartProvider} from "./Hooks/cartHook.tsx";
+import RegistrationScreen from "./Screens/Customer/RegistrationScreen.tsx";
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <DataDisplayScreen />
-  </StrictMode>,
+    <StrictMode>
+        <CartProvider>
+            <RegistrationScreen/>
+        </CartProvider>
+    </StrictMode>,
 )
