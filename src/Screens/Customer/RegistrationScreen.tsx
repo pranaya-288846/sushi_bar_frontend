@@ -1,15 +1,20 @@
 import {useState} from 'react';
-import {Box, Button, Card, CardContent, Checkbox, FormControl, TextField, Typography} from '@mui/material';
+import {Link, useNavigate} from 'react-router-dom'; // Import Link
+import {Box, Button, Card, CardContent, Checkbox, FormControl, TextField, Typography,} from '@mui/material';
+import useTable from '../../Hooks/tableHook.ts';
 
 const RegistrationScreen = () => {
     const [formData, setFormData] = useState({
         clientName: '',
         seats: 1,
-        hasMembership: false
+        hasMembership: false,
     });
     const [errors, setErrors] = useState({
-        clientName: ''
+        clientName: '',
     });
+    const {registerTable} = useTable();
+
+    const navigate = useNavigate();
 
     const validateName = (name: string) => {
         if (!name.trim()) return 'Client name is required';
@@ -20,31 +25,39 @@ const RegistrationScreen = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value, type, checked} = e.target;
 
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === 'checkbox' ? checked : value,
         }));
 
-        // Validate immediately when typing in name field
         if (name === 'clientName') {
-            setErrors(prev => ({
+            setErrors((prev) => ({
                 ...prev,
-                clientName: validateName(value)
+                clientName: validateName(value),
             }));
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Final validation check
         const nameError = validateName(formData.clientName);
         setErrors({clientName: nameError});
 
         if (!nameError) {
-            console.log('Form submitted:', formData);
-            // Here you would typically send data to your backend
-            alert('Registration successful!');
+            try {
+                await registerTable({
+                    clientName: formData.clientName,
+                    numberOfSeats: formData.seats,
+                    hasMembership: formData.hasMembership,
+                });
+
+                alert('Registration successful!');
+                navigate('/menu');
+            } catch (error) {
+                console.error('Registration failed:', error);
+                alert('Registration failed. Please try again.');
+            }
         }
     };
 
@@ -55,7 +68,7 @@ const RegistrationScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 minHeight: '100vh',
-                p: 2
+                p: 2,
             }}
         >
             <Card sx={{width: '100%', maxWidth: 500}}>
@@ -83,7 +96,6 @@ const RegistrationScreen = () => {
                                 type="number"
                                 value={formData.seats}
                                 onChange={handleChange}
-                                inputProps={{min: 1, max: 20}}
                             />
                         </FormControl>
 
@@ -109,6 +121,16 @@ const RegistrationScreen = () => {
                         </Button>
                     </form>
                 </CardContent>
+
+                {/* Link to login page */}
+                <Box sx={{p: 2, textAlign: 'center'}}>
+                    <Typography variant="body2">
+                        Already have an account?{' '}
+                        <Link to="/login" style={{textDecoration: 'none', color: '#1976d2'}}>
+                            Login here
+                        </Link>
+                    </Typography>
+                </Box>
             </Card>
         </Box>
     );

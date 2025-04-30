@@ -21,9 +21,52 @@ const useMenu = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }
 
-    return {fetchMenu, loading, error};
+    const postMenuItem = async (item: Omit<MenuData, 'id'>) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            await MenuService.postMenuItem(item);
+            return null;
+        } catch (e) {
+            console.error("Failed to add new menu item", e)
+            throw e;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const updateMenuItem = async (item: MenuData) => {
+        try {
+            await MenuService.updateMenuItem(item);
+            return null;
+        } catch (e) {
+            console.error("Failed to update menu item", e)
+            throw e;
+        }
+    }
+
+    const deleteMenuItem = async (id: number) => {
+        try {
+            await MenuService.deleteMenuItem(id);
+            return null;
+        } catch (e) {
+            console.error("Failed to delete menu item", e)
+        }
+    }
+
+    const fetchMenuItemById = async (id: number): Promise<MenuData> => {
+        try {
+            return await MenuService.getMenuItemById(id);
+        } catch (e) {
+            console.error("Failed to fetch menu item by id", e)
+            throw e;
+        }
+    }
+
+    return {fetchMenu, postMenuItem, updateMenuItem, deleteMenuItem, fetchMenuItemById, loading, error};
 };
 
 export default useMenu;

@@ -1,18 +1,18 @@
 import {useState} from "react";
 import OrderService from "../Api/services/OrderService.ts";
 import {OrderData} from "../Api/types/OrderData.ts";
+import {MenuData} from "../Api/types/MenuData.ts";
 
 const useOrder = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchOrders = async (): Promise<OrderData[]> => {
+    const fetchOrders = async (tableId: number = 0): Promise<OrderData[]> => {
         setLoading(true);
         setError(null);
 
         try {
-            const data: OrderData[] = await OrderService.getOrderItems();
-            return data;
+            return await OrderService.getOrderItems(tableId);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to fetch menu';
             setError(errorMessage);
@@ -22,12 +22,16 @@ const useOrder = () => {
         }
     };
 
-    const postOrder = async (item: OrderData) => {
+    const postOrder = async (item: MenuData, tableId: number) => {
         setLoading(true)
         setError(null)
 
         try {
-            await OrderService.postMenuItem(item)
+            await OrderService.postMenuItem({
+                menuItemId: item.id,
+                tableId: tableId,
+                status: "PROCESSING",
+            })
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to post item';
             setError(errorMessage);

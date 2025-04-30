@@ -2,9 +2,9 @@ import apiClient from "../Client.ts";
 import {OrderData} from "../types/OrderData.ts";
 
 const OrderService = {
-    async getOrderItems(): Promise<OrderData[]> {
+    async getOrderItems(tableId: number): Promise<OrderData[]> {
         try {
-            const response = await apiClient.get<OrderData[]>('/menu');
+            const response = await apiClient.get<OrderData[]>(`/orders?tableId=${tableId}`);
 
             console.log('API Response:', response);
 
@@ -15,19 +15,16 @@ const OrderService = {
         }
     },
 
-    async postMenuItem(item: Omit<OrderData, 'orderId'>) {
+    async postMenuItem(item: Omit<OrderData, 'id'>) {
         try {
             const response = await apiClient.post<OrderData>('/orders', item);
 
-            // Validate the response structure
-            if (!response || typeof response.data.orderId !== 'number') {
-                throw new Error('Invalid response structure');
-            }
+            console.log('API Response:', response);
 
             return null;
         } catch (e) {
             console.error('Failed to post menu item:', e);
-            throw e; // Re-throw to let the caller handle it
+            throw e;
         }
     }
 };

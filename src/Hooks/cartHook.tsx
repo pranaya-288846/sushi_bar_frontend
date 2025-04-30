@@ -14,6 +14,7 @@ export const CartProvider = ({children}: { children: ReactNode }) => {
 
     const addToCart = (item: MenuData) => {
         setCart(prev => [...prev, item]);
+        console.log("Added to cart: ", item.name, " (", item.id, ")")
     };
 
     const removeFromCart = (id: number) => {
