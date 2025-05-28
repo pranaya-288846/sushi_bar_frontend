@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom'; // Import Link
+import {Link, useNavigate} from 'react-router-dom';
 import {Box, Button, Card, CardContent, Checkbox, FormControl, TextField, Typography,} from '@mui/material';
 import useTable from '../../Hooks/tableHook.ts';
 
@@ -61,78 +61,106 @@ const RegistrationScreen = () => {
         }
     };
 
+    // JSON-LD for Table
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Table",
+        "clientName": formData.clientName,
+        "numberOfSeats": formData.seats,
+        "hasMembership": formData.hasMembership
+    };
+
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-                p: 2,
-            }}
+        <div
+            vocab="https://schema.org/"
+            typeof="Table"
         >
-            <Card sx={{width: '100%', maxWidth: 500}}>
-                <CardContent>
-                    <Typography variant="h5" component="h1" gutterBottom align="center">
-                        Client Registration
-                    </Typography>
+            <meta property="clientName" content={formData.clientName}/>
+            <meta property="numberOfSeats" content={formData.seats.toString()}/>
+            <meta property="hasMembership" content={formData.hasMembership.toString()}/>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    p: 2,
+                }}
+            >
+                <Card sx={{width: '100%', maxWidth: 500}}>
+                    <CardContent>
+                        <Typography variant="h5" component="h1" gutterBottom align="center">
+                            Client Registration
+                        </Typography>
 
-                    <form onSubmit={handleSubmit}>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Client Name"
-                                name="clientName"
-                                value={formData.clientName}
-                                onChange={handleChange}
-                                error={Boolean(errors.clientName)}
-                                helperText={errors.clientName}
-                            />
-                        </FormControl>
-
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Number of Seats"
-                                name="seats"
-                                type="number"
-                                value={formData.seats}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-
-                        <FormControl fullWidth margin="normal">
-                            <Box sx={{display: 'flex', alignItems: 'center'}}>
-                                <Checkbox
-                                    name="hasMembership"
-                                    checked={formData.hasMembership}
-                                    onChange={handleChange}
-                                />
-                                <Typography>Has Membership</Typography>
-                            </Box>
-                        </FormControl>
-
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            fullWidth
-                            size="large"
-                            sx={{mt: 3}}
+                        {/* RDFa: Table */}
+                        <form
+                            onSubmit={handleSubmit}
                         >
-                            Register
-                        </Button>
-                    </form>
-                </CardContent>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Client Name"
+                                    name="clientName"
+                                    value={formData.clientName}
+                                    onChange={handleChange}
+                                    error={Boolean(errors.clientName)}
+                                    helperText={errors.clientName}
+                                    inputProps={{property: "clientName"}}
+                                />
+                            </FormControl>
 
-                {/* Link to login page */}
-                <Box sx={{p: 2, textAlign: 'center'}}>
-                    <Typography variant="body2">
-                        Already have an account?{' '}
-                        <Link to="/login" style={{textDecoration: 'none', color: '#1976d2'}}>
-                            Login here
-                        </Link>
-                    </Typography>
-                </Box>
-            </Card>
-        </Box>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Number of Seats"
+                                    name="seats"
+                                    type="number"
+                                    value={formData.seats}
+                                    onChange={handleChange}
+                                    inputProps={{property: "numberOfSeats"}}
+                                />
+                            </FormControl>
+
+                            <FormControl fullWidth margin="normal">
+                                <Box sx={{display: 'flex', alignItems: 'center'}}>
+                                    <Checkbox
+                                        name="hasMembership"
+                                        checked={formData.hasMembership}
+                                        onChange={handleChange}
+                                        inputProps={{property: "hasMembership"}}
+                                    />
+                                    <Typography>Has Membership</Typography>
+                                </Box>
+                            </FormControl>
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                size="large"
+                                sx={{mt: 3}}
+                            >
+                                Register
+                            </Button>
+                        </form>
+                    </CardContent>
+
+                    {/* Link to login page */}
+                    <Box sx={{p: 2, textAlign: 'center'}}>
+                        <Typography variant="body2">
+                            Already have an account?{' '}
+                            <Link to="/login" style={{textDecoration: 'none', color: '#1976d2'}}>
+                                Login here
+                            </Link>
+                        </Typography>
+                    </Box>
+                </Card>
+                {/* JSON-LD script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+                />
+            </Box>
+        </div>
     );
 };
 
