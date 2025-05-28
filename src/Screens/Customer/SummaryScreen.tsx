@@ -16,7 +16,7 @@ import {
     Typography,
 } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {useNavigate} from "react-router-dom"; // Import useNavigate
+import {useNavigate} from "react-router-dom";
 import useOrder from "../../Hooks/orderHook.ts";
 import useMenu from "../../Hooks/menuHook.ts";
 import {MenuData} from "../../Api/types/MenuData.ts";
@@ -30,7 +30,7 @@ const SummaryScreen: React.FC = () => {
     const profileManager = UserProfileSingleton.getInstance();
     const [totalPrice, setTotalPrice] = useState<number>(0);
 
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate();
 
     profileManager.setProfile({id: 3, name: "Prune"});
 
@@ -51,9 +51,21 @@ const SummaryScreen: React.FC = () => {
         loadOrders();
     }, []);
 
-    // Back button handler
+    // JSON-LD for Order
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Order",
+        "customerName": profileManager.getProfile()?.name ?? "",
+        "totalPrice": totalPrice,
+        "orderedItems": menuList.map(item => ({
+            "@type": "MenuItem",
+            "name": item.name,
+            "price": item.price
+        }))
+    };
+
     const handleBackClick = () => {
-        navigate("/menu"); // Adjust the path if your menu route is different
+        navigate("/menu");
     };
 
     return (
@@ -81,49 +93,69 @@ const SummaryScreen: React.FC = () => {
             </AppBar>
 
             <Box p={3}>
-                <Typography variant="h4" gutterBottom>
-                    Summary screen
-                </Typography>
+                <div vocab="https://schema.org/" typeof="Order">
+                    <meta property="customerName" content={profileManager.getProfile()?.name ?? ""}/>
+                    <meta property="totalPrice" content={totalPrice.toString()}/>
+                    {/* RDFa: orderedItems as nested elements */}
+                    {menuList.map(item => (
+                        <div
+                            key={item.id}
+                            property="orderedItems"
+                            typeof="MenuItem"
+                            style={{display: "none"}}
+                        >
+                            <span property="name">{item.name}</span>
+                            <span property="price">{item.price}</span>
+                        </div>
+                    ))}
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+                    />
+                    <Typography variant="h4" gutterBottom>
+                        Summary screen
+                    </Typography>
 
-                {loading && (
-                    <Box display="flex" justifyContent="center" my={4}>
-                        <CircularProgress/>
-                    </Box>
-                )}
+                    {loading && (
+                        <Box display="flex" justifyContent="center" my={4}>
+                            <CircularProgress/>
+                        </Box>
+                    )}
 
-                {error && (
-                    <Alert severity="error" sx={{mb: 2}}>
-                        {error}
-                    </Alert>
-                )}
+                    {error && (
+                        <Alert severity="error" sx={{mb: 2}}>
+                            {error}
+                        </Alert>
+                    )}
 
-                {!loading && !error && menuList.length === 0 && (
-                    <Typography>No orders found.</Typography>
-                )}
+                    {!loading && !error && menuList.length === 0 && (
+                        <Typography>No orders found.</Typography>
+                    )}
 
-                {!loading && !error && menuList.length > 0 && (
-                    <TableContainer component={Paper}>
-                        <Table aria-label="Customer information">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Menu name</TableCell>
-                                    <TableCell>Menu price</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {menuList.map((list) => (
-                                    <TableRow key={list.id}>
-                                        <TableCell>{list.name}</TableCell>
-                                        <TableCell>{list.price}</TableCell>
+                    {!loading && !error && menuList.length > 0 && (
+                        <TableContainer component={Paper}>
+                            <Table aria-label="Customer information">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Menu name</TableCell>
+                                        <TableCell>Menu price</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                )}
-                {!loading && !error && (
-                    <Typography>Total Price: {totalPrice}</Typography>
-                )}
+                                </TableHead>
+                                <TableBody>
+                                    {menuList.map((list) => (
+                                        <TableRow key={list.id}>
+                                            <TableCell property='name'>{list.name}</TableCell>
+                                            <TableCell property='price'>{list.price}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                    {!loading && !error && (
+                        <Typography>Total Price: {totalPrice}</Typography>
+                    )}
+                </div>
             </Box>
         </>
     );
