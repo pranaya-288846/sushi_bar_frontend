@@ -23,6 +23,17 @@ const LoginScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+    // JSON-LD for LoginAction
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "LoginAction",
+        "agent": {
+            "@type": "Person",
+            "identifier": formData.username,
+            "password": formData.password
+        },
+        "target": "Login"
+    };
 
     const validateFields = () => {
         let isValid = true;
@@ -86,67 +97,81 @@ const LoginScreen = () => {
     };
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-                p: 2
-            }}
+        <div
+            vocab="https://schema.org/"
+            typeof="LoginAction"
         >
-            <Card sx={{width: '100%', maxWidth: 500}}>
-                <CardContent>
-                    <Typography variant="h5" component="h1" gutterBottom align="center">
-                        Login
-                    </Typography>
-
-                    {errors.form && (
-                        <Typography color="error" align="center" sx={{mb: 2}}>
-                            {errors.form}
+            <meta property="agent" content={formData.username}/>
+            <meta property="target" content="Login"/>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    p: 2
+                }}
+            >
+                <Card sx={{width: '100%', maxWidth: 500}}>
+                    <CardContent>
+                        <Typography variant="h5" component="h1" gutterBottom align="center">
+                            Login
                         </Typography>
-                    )}
 
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            label="Username"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            error={Boolean(errors.username)}
-                            helperText={errors.username}
-                            fullWidth
-                            margin="normal"
-                            autoComplete="username"
-                        />
+                        {errors.form && (
+                            <Typography color="error" align="center" sx={{mb: 2}}>
+                                {errors.form}
+                            </Typography>
+                        )}
 
-                        <TextField
-                            label="Password"
-                            name="password"
-                            type="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            error={Boolean(errors.password)}
-                            helperText={errors.password}
-                            fullWidth
-                            margin="normal"
-                            autoComplete="current-password"
-                        />
+                        <form onSubmit={handleSubmit}>
+                            <TextField
+                                label="Username"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                error={Boolean(errors.username)}
+                                helperText={errors.username}
+                                fullWidth
+                                margin="normal"
+                                autoComplete="username"
+                                inputProps={{property: "agent"}}
+                            />
 
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            fullWidth
-                            size="large"
-                            sx={{mt: 3}}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Logging in...' : 'Login'}
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
-        </Box>
+                            <TextField
+                                label="Password"
+                                name="password"
+                                type="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                error={Boolean(errors.password)}
+                                helperText={errors.password}
+                                fullWidth
+                                margin="normal"
+                                autoComplete="current-password"
+                            />
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                size="large"
+                                sx={{mt: 3}}
+                                disabled={isLoading}
+                                property="target"
+                            >
+                                {isLoading ? 'Logging in...' : 'Login'}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+                {/* JSON-LD script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+                />
+            </Box>
+        </div>
     );
 };
 
