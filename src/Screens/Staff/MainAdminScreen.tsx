@@ -23,6 +23,17 @@ const MainAdminScreen: React.FC = () => {
         },
     ];
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": cardData.map(card => ({
+            "@type": "Card",
+            "title": card.title,
+            "buttonText": card.buttonText,
+            "onClick": card.onClick
+        }))
+    };
+
     return (
         <Box
             sx={{
@@ -32,6 +43,8 @@ const MainAdminScreen: React.FC = () => {
                 display: 'flex',
                 flexDirection: 'column',
             }}
+            vocab="https://schema.org/"
+            typeof="ItemList"
         >
             <AppBar position="static">
                 <Toolbar>
@@ -54,6 +67,8 @@ const MainAdminScreen: React.FC = () => {
                     {cardData.map((card, index) => (
                         <Card
                             key={index}
+                            property="itemListElement"
+                            typeof="Card"
                             sx={{
                                 height: '100%',
                                 display: 'flex',
@@ -70,12 +85,18 @@ const MainAdminScreen: React.FC = () => {
                                 <Typography
                                     variant="h5"
                                     component="div"
+                                    property="title"
                                     sx={{textAlign: 'center', mb: 3}}
                                 >
                                     {card.title}
                                 </Typography>
                                 <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                    <Button variant="contained" onClick={card.onClick} sx={{mt: 2}}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={card.onClick}
+                                        sx={{mt: 2}}
+                                        property="buttonText"
+                                    >
                                         {card.buttonText}
                                     </Button>
                                 </Box>
@@ -84,6 +105,10 @@ const MainAdminScreen: React.FC = () => {
                     ))}
                 </Grid>
             </Box>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd, null, 2)}}
+            />
         </Box>
     );
 };
