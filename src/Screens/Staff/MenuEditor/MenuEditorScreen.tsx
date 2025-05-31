@@ -86,23 +86,18 @@ const MenuEditorScreen = () => {
         "@context": "https://schema.org",
         "@type": "Menu",
         "name": "Menu Editor Screen",
-        "hasMenuSection": [
-            {
-                "@type": "MenuSection",
-                "name": "All Items",
-                "hasMenuItem": menuData.map(item => ({
-                    "@type": "MenuItem",
-                    "name": item.name,
-                    "description": item.description,
-                    "price": item.price,
-                    "offers": {
-                        "@type": "Offer",
-                        "availability": item.availability === 0 ? "OutOfStock" : "InStock"
-                    }
-                }))
+        "hasMenuItem": menuData.map(item => ({
+            "@type": "MenuItem",
+            "name": item.name,
+            "description": item.description,
+            "offers": {
+                "@type": "Offer",
+                "price": item.price.toFixed(2),
+                "availability": item.availability === 0 ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
             }
-        ]
+        }))
     };
+
 
     if (loading) {
         return (
@@ -126,26 +121,26 @@ const MenuEditorScreen = () => {
             vocab="https://schema.org/"
             typeof="Menu"
         >
-            <meta property="name" content="Menu Editor Screen"/>
-            <h1 className="text-3xl font-bold mb-8" property="name">Menu Editor Screen</h1>
+            <h1 className="text-3xl font-bold mb-8">Menu Editor Screen</h1>
 
-            <Grid container spacing={4} property="hasMenuSection" typeof="MenuSection">
-                <meta property="name" content="All Items"/>
+            <Grid container spacing={4}>
                 {menuData.map((item) => (
                     <Card property="hasMenuItem" typeof="MenuItem" key={item.id}>
                         <CardContent>
                             <h3 className="font-bold text-lg mb-1" property="name">{item.name}</h3>
-                            <p className="text-gray-600" property="price">${item.price.toFixed(2)}</p>
                             <p className="text-sm text-gray-500 mt-2 line-clamp-2 flex-grow" property="description">
                                 {item.description}
                             </p>
                             <div className="mt-2" property="offers" typeof="Offer">
+                                <p className="text-gray-600" property="price">${item.price.toFixed(2)}</p>
+                                <meta property='availability'
+                                      content={item.availability === 0 ? 'OutOfStock' : 'InStock'}/>
                                 <span className={`px-2 py-1 text-xs rounded-full ${
                                     item.availability !== 0
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-red-100 text-red-800'
                                 }`}
-                                      property="availability">
+                                >
                                     {item.availability === 0 ? 'OutOfStock' : 'InStock'}
                                 </span>
                             </div>
@@ -182,7 +177,7 @@ const MenuEditorScreen = () => {
             />
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd, null, 2)}}
+                dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
             />
         </div>
     );

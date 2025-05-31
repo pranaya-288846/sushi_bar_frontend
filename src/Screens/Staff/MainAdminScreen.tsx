@@ -74,16 +74,20 @@ const MainAdminScreen: React.FC = () => {
         "@context": "https://schema.org",
         "@type": "ItemList",
         "itemListElement": cardData.map(card => ({
-            "@type": "ListItem",
-            "title": card.title,
-            "buttonText": card.buttonText,
-            "onClick": card.onClick.toString() // Note: functions cannot be serialized, consider removing or replacing
+            "@type": "WebPageElement",
+            "name": card.title,
+            "potentialAction": {
+                "@type": "Action",
+                "name": card.buttonText
+            }
         }))
     };
+
 
     return (
         <div
             vocab="https://schema.org/"
+            typeof="ItemList"
         >
             <Box sx={containerStyles}>
                 <AppBar position="static">
@@ -96,36 +100,38 @@ const MainAdminScreen: React.FC = () => {
 
                 <Box sx={contentWrapperStyles}>
                     <Grid>
-                        {cardData.map((card, index) => (
-                            <Card
-                                key={index}
-                                typeof="WebPageElement"
+                        <div property='itemListElement'>
+                            {cardData.map((card, index) => (
+                                <Card
+                                    key={index}
+                                    typeof="WebPageElement"
 
-                                sx={cardStyles}
-                            >
-                                <CardContent>
-                                    <Typography
-                                        variant="h5"
-                                        component="div"
-                                        property="name"
-                                        sx={titleStyles}
-                                    >
-                                        {card.title}
-                                    </Typography>
-                                    <Box sx={buttonWrapperStyles}>
-                                        <Button
-                                            variant="contained"
-                                            onClick={card.onClick}
-                                            sx={buttonStyles}
-                                            property="potentialAction"
-                                            typeof="Action"
+                                    sx={cardStyles}
+                                >
+                                    <CardContent>
+                                        <Typography
+                                            variant="h5"
+                                            component="div"
+                                            property="name"
+                                            sx={titleStyles}
                                         >
-                                            <span property='name'>{card.buttonText}</span>
-                                        </Button>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                            {card.title}
+                                        </Typography>
+                                        <Box sx={buttonWrapperStyles}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={card.onClick}
+                                                sx={buttonStyles}
+                                                property="potentialAction"
+                                                typeof="Action"
+                                            >
+                                                <span property='name'>{card.buttonText}</span>
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
                     </Grid>
                 </Box>
 

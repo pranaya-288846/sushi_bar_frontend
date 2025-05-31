@@ -29,11 +29,14 @@ const LoginScreen = () => {
         "@type": "LoginAction",
         "agent": {
             "@type": "Person",
-            "identifier": formData.username,
-            "password": formData.password
+            "name": formData.username
         },
-        "target": "Login"
+        "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://yourwebsite.com/login"
+        }
     };
+
 
     const validateFields = () => {
         let isValid = true;

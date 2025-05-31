@@ -19,23 +19,20 @@ const TableViewScreen: React.FC = () => {
         loadTables();
     }, []);
 
-    // JSON-LD for tables, using property names matching the table properties
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "TableView",
-        "name": "Restaurant Tables",
-        "tableViewItems": tables.map(table => ({
-            "@type": "Table",
+        "@graph": tables.map(table => ({
+            "@type": "FoodEstablishmentReservation",
             "identifier": table.id,
-            "clientName": table.clientName,
-            "hasMembership": table.hasMembership,
-            "numberOfSeats": table.numberOfSeats
+            "underName": table.clientName,
+            "programMembershipUsed": table.hasMembership,
+            "partySize": table.numberOfSeats
         }))
     };
 
+
     return (
-        <div vocab="https://schema.org/" typeof="TableView">
-            <meta property="name" content="Restaurant Tables"/>
+        <div vocab="https://schema.org/" typeof="FoodEstablishmentReservation">
             <Box p={3}>
                 <Typography variant="h4" gutterBottom>
                     Tables
@@ -60,20 +57,21 @@ const TableViewScreen: React.FC = () => {
                 {!loading && !error && tables.length > 0 && (
                     <Grid container spacing={4}>
                         {tables.map((table) => (
-                            <Card key={table.id} property="tableViewItems" typeof="Table" sx={{width: 300, m: 2}}>
+                            <Card key={table.id} sx={{width: 300, m: 2}}>
                                 <CardContent>
                                     <Typography variant="h6" property="identifier">
                                         Table ID: {table.id}
                                     </Typography>
                                     <Typography>
-                                        <meta property="clientName" content={table.clientName}/>
+                                        <meta property="underName" content={table.clientName}/>
                                         Client Name: {table.clientName}
                                     </Typography>
                                     <Typography>
-                                        <meta property="hasMembership" content={table.hasMembership.toString()}/>
+                                        <meta property="programMembershipUsed"
+                                              content={table.hasMembership.toString()}/>
                                         Has Membership: {String(table.hasMembership)}
                                     </Typography>
-                                    <Typography property="numberOfSeats" content={table.numberOfSeats.toString()}>
+                                    <Typography property="partySize" content={table.numberOfSeats.toString()}>
                                         Number of Seats: {table.numberOfSeats}
                                     </Typography>
                                 </CardContent>

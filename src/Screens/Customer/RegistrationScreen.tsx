@@ -63,11 +63,15 @@ const RegistrationScreen = () => {
 
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "Event",
-        "name": formData.clientName,
+        "@type": "FoodEstablishmentReservation",
+        "underName": {
+            "@type": "Person",
+            "name": formData.clientName
+        },
         "partySize": formData.seats,
-        "member": formData.hasMembership
+        "programMembershipUsed": formData.hasMembership ? "Yes" : "No"
     };
+
 
     return (
         <div vocab="https://schema.org/" typeof="FoodEstablishmentReservation">

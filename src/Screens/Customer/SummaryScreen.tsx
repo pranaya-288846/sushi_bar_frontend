@@ -55,14 +55,25 @@ const SummaryScreen: React.FC = () => {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Order",
-        "customerName": profileManager.getProfile()?.name ?? "",
+        "customer": {
+            "@type": "Person",
+            "name": profileManager.getProfile()?.name || ""
+        },
         "totalPrice": totalPrice,
-        "orderedItems": menuList.map(item => ({
-            "@type": "MenuItem",
-            "name": item.name,
-            "price": item.price
+        "priceCurrency": "USD",
+        "orderedItem": menuList.map(item => ({
+            "@type": "OrderItem",
+            "orderQuantity": 1,
+            "orderItemNumber": item.id.toString(),
+            "orderedItem": {
+                "@type": "Offer",
+                "name": item.name,
+                "price": item.price,
+                "priceCurrency": "USD"
+            }
         }))
     };
+
 
     const handleBackClick = () => {
         navigate("/menu");
@@ -133,7 +144,7 @@ const SummaryScreen: React.FC = () => {
                                                 <meta property='orderItemNumber' content={list.id.toString()}/>
                                                     <span property="orderedItem" typeof="Offer">
                                                         <TableCell property='name'>{list.name}</TableCell>
-                                                        
+
                                                         <TableCell property='price'
                                                                    content={list.price.toString()}>{list.price}</TableCell>
 

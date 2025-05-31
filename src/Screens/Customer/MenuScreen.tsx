@@ -31,7 +31,6 @@ const MenuScreen = () => {
         navigate('/summary');
     };
 
-    // JSON-LD: Menu with direct menuItems array
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Menu",
@@ -40,10 +39,17 @@ const MenuScreen = () => {
             "@type": "MenuItem",
             "name": item.name,
             "description": item.description,
-            "price": item.price.toFixed(2),
-            "availability": item.availability !== 0 ? "InStock" : "OutOfStock"
+            "offers": {
+                "@type": "Offer",
+                "price": item.price,
+                "priceCurrency": "USD",
+                "availability": item.availability !== 0
+                    ? "https://schema.org/InStock"
+                    : "https://schema.org/OutOfStock"
+            }
         }))
     };
+
 
     if (menuData.length === 0 && !loading) {
         return (
@@ -82,7 +88,6 @@ const MenuScreen = () => {
                 </Toolbar>
             </AppBar>
 
-            {/* RDFa annotations */}
             <div vocab="https://schema.org/" typeof="Menu">
                 <meta property="name" content="Restaurant Menu"/>
                 <Grid container spacing={4}>

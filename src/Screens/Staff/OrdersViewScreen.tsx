@@ -38,15 +38,19 @@ const OrdersScreen: React.FC = () => {
         "@type": "ItemList",
         "itemListElement": orders.map(order => ({
             "@type": "Order",
-            "orderNumber": order.id,
-            "tableNumber": order.tableId,
+            "identifier": order.id,
+            "customer": {
+                "@type": "Person",
+                "identifier": order.tableId
+            },
+            "orderStatus": order.status,
             "orderedItem": {
                 "@type": "MenuItem",
                 "identifier": order.menuItemId
-            },
-            "orderStatus": order.status
+            }
         }))
     };
+
 
     return (
         <Box p={3}>
@@ -60,8 +64,10 @@ const OrdersScreen: React.FC = () => {
                     <ul style={{display: "none"}}>
                         {orders.map(order => (
                             <li key={order.id} property="itemListElement" typeof="Order">
-                                <span property="orderNumber">{order.id}</span>
-                                <span property="tableNumber">{order.tableId}</span>
+                                <span property="identifier">{order.id}</span>
+                                <span property='customer' typeof="Person">
+                                    <span property="identifier">{order.tableId}</span>
+                                </span>
                                 <span property="orderStatus">{order.status}</span>
                                 <span property="orderedItem" typeof="MenuItem">
                                     <span property="identifier">{order.menuItemId}</span>
