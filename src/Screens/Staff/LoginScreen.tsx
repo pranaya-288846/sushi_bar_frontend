@@ -99,10 +99,9 @@ const LoginScreen = () => {
     return (
         <div
             vocab="https://schema.org/"
-            typeof="LoginAction"
+            typeof="WebPage"
+            id="login-page"
         >
-            <meta property="agent" content={formData.username}/>
-            <meta property="target" content="Login"/>
             <Box
                 sx={{
                     display: 'flex',
@@ -124,7 +123,11 @@ const LoginScreen = () => {
                             </Typography>
                         )}
 
-                        <form onSubmit={handleSubmit}>
+                        <form
+                            property="potentialAction"
+                            typeof="Action"
+                            onSubmit={handleSubmit}>
+
                             <TextField
                                 label="Username"
                                 name="username"

@@ -36,7 +36,7 @@ const MenuScreen = () => {
         "@context": "https://schema.org",
         "@type": "Menu",
         "name": "Restaurant Menu",
-        "menuItems": menuData.map(item => ({
+        "hasMenuItem": menuData.map(item => ({
             "@type": "MenuItem",
             "name": item.name,
             "description": item.description,
@@ -87,40 +87,43 @@ const MenuScreen = () => {
                 <meta property="name" content="Restaurant Menu"/>
                 <Grid container spacing={4}>
                     {menuData.map((item) => (
-                        <Card key={item.id} property="menuItems" typeof="MenuItem">
+                        <span property="hasMenuItem" typeof="MenuItem" key={item.id}>
+                          <Card>
                             <CardContent>
-                                <h3 property="name" className="font-bold text-lg mb-1">{item.name}</h3>
-                                <p property="price" content={item.price.toFixed(2)} className="text-gray-600">
-                                    ${item.price.toFixed(2)}
-                                </p>
-                                <p property="description" className="text-sm text-gray-500 mt-2 line-clamp-2 flex-grow">
-                                    {item.description}
-                                </p>
+                              <h3 property="name" className="font-bold text-lg mb-1">{item.name}</h3>
+                              <span property="offers" typeof="Offer">
+                                <meta property="price" content={item.price.toString()}/>
+                                <meta property="priceCurrency" content="USD"/>
                                 <meta property="availability"
-                                      content={item.availability !== 0 ? "InStock" : "OutOfStock"}/>
+                                      content={item.availability !== 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"}/>
+                                <p className="text-gray-600">${item.price.toFixed(2)}</p>
                                 <div className="mt-2">
-                                    <span
-                                        className={`px-2 py-1 text-xs rounded-full ${
-                                            item.availability !== 0
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-red-100 text-red-800'
-                                        }`}
-                                    >
-                                        {item.availability === 0 ? 'Out of Stock' : 'Available'}
-                                    </span>
+                                  <span
+                                      className={`px-2 py-1 text-xs rounded-full ${
+                                          item.availability !== 0
+                                              ? 'bg-green-100 text-green-800'
+                                              : 'bg-red-100 text-red-800'
+                                      }`}
+                                  >
+                                    {item.availability === 0 ? 'Out of Stock' : 'Available'}
+                                  </span>
                                 </div>
+                              </span>
+                              <p property="description" className="text-sm text-gray-500 mt-2 line-clamp-2 flex-grow">
+                                {item.description}
+                              </p>
                             </CardContent>
                             <CardActions>
-                                <Button
-                                    key={item.id}
-                                    onClick={() => {
-                                        postOrder(item, profileManager.getProfile()?.id ?? 0);
-                                    }}
-                                >
-                                    Add to cart
-                                </Button>
+                              <Button
+                                  onClick={() => {
+                                      postOrder(item, profileManager.getProfile()?.id ?? 0);
+                                  }}
+                              >
+                                Add to cart
+                              </Button>
                             </CardActions>
-                        </Card>
+                          </Card>
+                        </span>
                     ))}
                 </Grid>
                 {/* JSON-LD script */}

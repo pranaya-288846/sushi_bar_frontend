@@ -1,6 +1,53 @@
 import React from 'react';
-import {AppBar, Box, Button, Card, CardContent, Grid, Toolbar, Typography,} from '@mui/material';
+import {AppBar, Box, Button, Card, CardContent, Grid, Toolbar, Typography} from '@mui/material';
 import {useNavigate} from "react-router-dom";
+
+const containerStyles = {
+    minHeight: '100vh',
+    width: '100vw',
+    bgcolor: '#f5f5f5',
+    display: 'flex',
+    flexDirection: 'column',
+};
+
+const contentWrapperStyles = {
+    flexGrow: 1,
+    p: 4,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+};
+
+// const gridStyles = {
+//     justifyContent: 'center',
+//     maxWidth: 900,
+// };
+
+const cardStyles = {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    boxShadow: 3,
+    transition: 'box-shadow 0.3s',
+    '&:hover': {
+        boxShadow: 6,
+    },
+};
+
+const titleStyles = {
+    textAlign: 'center',
+    mb: 3,
+};
+
+const buttonWrapperStyles = {
+    display: 'flex',
+    justifyContent: 'center',
+};
+
+const buttonStyles = {
+    mt: 2,
+};
 
 const MainAdminScreen: React.FC = () => {
     const navigate = useNavigate();
@@ -27,89 +74,68 @@ const MainAdminScreen: React.FC = () => {
         "@context": "https://schema.org",
         "@type": "ItemList",
         "itemListElement": cardData.map(card => ({
-            "@type": "Card",
+            "@type": "ListItem",
             "title": card.title,
             "buttonText": card.buttonText,
-            "onClick": card.onClick
+            "onClick": card.onClick.toString() // Note: functions cannot be serialized, consider removing or replacing
         }))
     };
 
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                width: '100vw',
-                bgcolor: '#f5f5f5',
-                display: 'flex',
-                flexDirection: 'column',
-            }}
+        <div
             vocab="https://schema.org/"
-            typeof="ItemList"
         >
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography variant="h6" component="div">
-                        Admin Dashboard
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+            <Box sx={containerStyles}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6" component="div">
+                            Admin Dashboard
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
 
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    p: 4,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <Grid container spacing={4} justifyContent="center" maxWidth={900}>
-                    {cardData.map((card, index) => (
-                        <Card
-                            key={index}
-                            property="itemListElement"
-                            typeof="Card"
-                            sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                boxShadow: 3,
-                                '&:hover': {
-                                    boxShadow: 6,
-                                },
-                                transition: 'box-shadow 0.3s',
-                            }}
-                        >
-                            <CardContent>
-                                <Typography
-                                    variant="h5"
-                                    component="div"
-                                    property="title"
-                                    sx={{textAlign: 'center', mb: 3}}
-                                >
-                                    {card.title}
-                                </Typography>
-                                <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={card.onClick}
-                                        sx={{mt: 2}}
-                                        property="buttonText"
+                <Box sx={contentWrapperStyles}>
+                    <Grid>
+                        {cardData.map((card, index) => (
+                            <Card
+                                key={index}
+                                typeof="WebPageElement"
+
+                                sx={cardStyles}
+                            >
+                                <CardContent>
+                                    <Typography
+                                        variant="h5"
+                                        component="div"
+                                        property="name"
+                                        sx={titleStyles}
                                     >
-                                        {card.buttonText}
-                                    </Button>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </Grid>
+                                        {card.title}
+                                    </Typography>
+                                    <Box sx={buttonWrapperStyles}>
+                                        <Button
+                                            variant="contained"
+                                            onClick={card.onClick}
+                                            sx={buttonStyles}
+                                            property="potentialAction"
+                                            typeof="Action"
+                                        >
+                                            <span property='name'>{card.buttonText}</span>
+                                        </Button>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Grid>
+                </Box>
+
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+                />
             </Box>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd, null, 2)}}
-            />
-        </Box>
+        </div>
+
     );
 };
 

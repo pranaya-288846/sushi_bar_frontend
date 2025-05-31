@@ -61,23 +61,16 @@ const RegistrationScreen = () => {
         }
     };
 
-    // JSON-LD for Table
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "Table",
-        "clientName": formData.clientName,
-        "numberOfSeats": formData.seats,
-        "hasMembership": formData.hasMembership
+        "@type": "Event",
+        "name": formData.clientName,
+        "partySize": formData.seats,
+        "member": formData.hasMembership
     };
 
     return (
-        <div
-            vocab="https://schema.org/"
-            typeof="Table"
-        >
-            <meta property="clientName" content={formData.clientName}/>
-            <meta property="numberOfSeats" content={formData.seats.toString()}/>
-            <meta property="hasMembership" content={formData.hasMembership.toString()}/>
+        <div vocab="https://schema.org/" typeof="FoodEstablishmentReservation">
             <Box
                 sx={{
                     display: 'flex',
@@ -92,56 +85,53 @@ const RegistrationScreen = () => {
                         <Typography variant="h5" component="h1" gutterBottom align="center">
                             Client Registration
                         </Typography>
-
-                        {/* RDFa: Table */}
-                        <form
-                            onSubmit={handleSubmit}
-                        >
-                            <FormControl fullWidth margin="normal">
-                                <TextField
-                                    label="Client Name"
-                                    name="clientName"
-                                    value={formData.clientName}
-                                    onChange={handleChange}
-                                    error={Boolean(errors.clientName)}
-                                    helperText={errors.clientName}
-                                    inputProps={{property: "clientName"}}
-                                />
-                            </FormControl>
-
-                            <FormControl fullWidth margin="normal">
-                                <TextField
-                                    label="Number of Seats"
-                                    name="seats"
-                                    type="number"
-                                    value={formData.seats}
-                                    onChange={handleChange}
-                                    inputProps={{property: "numberOfSeats"}}
-                                />
-                            </FormControl>
-
-                            <FormControl fullWidth margin="normal">
-                                <Box sx={{display: 'flex', alignItems: 'center'}}>
-                                    <Checkbox
-                                        name="hasMembership"
-                                        checked={formData.hasMembership}
+                        <div>
+                            <form onSubmit={handleSubmit}>
+                                <FormControl fullWidth margin="normal">
+                                    <meta property='underName' content={formData.clientName}/>
+                                    <TextField
+                                        label="Client Name"
+                                        value={formData.clientName}
                                         onChange={handleChange}
-                                        inputProps={{property: "hasMembership"}}
+                                        error={Boolean(errors.clientName)}
+                                        helperText={errors.clientName}
                                     />
-                                    <Typography>Has Membership</Typography>
-                                </Box>
-                            </FormControl>
+                                </FormControl>
 
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                fullWidth
-                                size="large"
-                                sx={{mt: 3}}
-                            >
-                                Register
-                            </Button>
-                        </form>
+                                <FormControl fullWidth margin="normal">
+                                    <meta property='partySize' content={formData.seats.toString()}/>
+                                    <TextField
+                                        label="Number of Seats"
+                                        name="seats"
+                                        type="number"
+                                        value={formData.seats}
+                                        onChange={handleChange}
+                                    />
+                                </FormControl>
+
+                                <FormControl fullWidth margin="normal">
+                                    <Box sx={{display: 'flex', alignItems: 'center'}}>
+                                        <Checkbox
+                                            property="programMembershipUsed"
+                                            checked={formData.hasMembership}
+                                            onChange={handleChange}
+                                        />
+                                        <Typography>Has Membership</Typography>
+                                    </Box>
+                                </FormControl>
+
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    fullWidth
+                                    size="large"
+                                    sx={{mt: 3}}
+                                >
+                                    Register
+                                </Button>
+                            </form>
+                        </div>
+
                     </CardContent>
 
                     {/* Link to login page */}
@@ -154,6 +144,7 @@ const RegistrationScreen = () => {
                         </Typography>
                     </Box>
                 </Card>
+
                 {/* JSON-LD script */}
                 <script
                     type="application/ld+json"

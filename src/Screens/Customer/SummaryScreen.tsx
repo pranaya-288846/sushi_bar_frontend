@@ -94,24 +94,6 @@ const SummaryScreen: React.FC = () => {
 
             <Box p={3}>
                 <div vocab="https://schema.org/" typeof="Order">
-                    <meta property="customerName" content={profileManager.getProfile()?.name ?? ""}/>
-                    <meta property="totalPrice" content={totalPrice.toString()}/>
-                    {/* RDFa: orderedItems as nested elements */}
-                    {menuList.map(item => (
-                        <div
-                            key={item.id}
-                            property="orderedItems"
-                            typeof="MenuItem"
-                            style={{display: "none"}}
-                        >
-                            <span property="name">{item.name}</span>
-                            <span property="price">{item.price}</span>
-                        </div>
-                    ))}
-                    <script
-                        type="application/ld+json"
-                        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
-                    />
                     <Typography variant="h4" gutterBottom>
                         Summary screen
                     </Typography>
@@ -144,9 +126,21 @@ const SummaryScreen: React.FC = () => {
                                 <TableBody>
                                     {menuList.map((list) => (
                                         <TableRow key={list.id}>
-                                            <TableCell property='name'>{list.name}</TableCell>
-                                            <TableCell property='price'>{list.price}</TableCell>
+                                            <span
+                                                property='orderedItem' typeof='OrderItem'
+                                            >
+                                                <meta property='orderQuantity' content='1'/>
+                                                <meta property='orderItemNumber' content={list.id.toString()}/>
+                                                    <span property="orderedItem" typeof="Offer">
+                                                        <TableCell property='name'>{list.name}</TableCell>
+                                                        
+                                                        <TableCell property='price'
+                                                                   content={list.price.toString()}>{list.price}</TableCell>
+
+                                                    </span>
+                                                </span>
                                         </TableRow>
+
                                     ))}
                                 </TableBody>
                             </Table>
@@ -155,6 +149,10 @@ const SummaryScreen: React.FC = () => {
                     {!loading && !error && (
                         <Typography>Total Price: {totalPrice}</Typography>
                     )}
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+                    />
                 </div>
             </Box>
         </>
